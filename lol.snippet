@@ -1,4 +1,7 @@
-# 掌上英雄联盟开屏广告重写
+# 掌上英雄联盟去广告（重写合集）
+^https?:\/\/sentry\.qt\.qq\.com\/ url reject
+^https?:\/\/([\w-]+\.)?tjstats\.com\/ url reject
+^https?:\/\/([\w-]+\.)?ad\.qq\.com\/ url reject
 ^https?:\/\/mlol\.qt\.qq\.com\/go\/recommend\/platflashbox url response-body-json {"error_code":0,"error_msg":"OK","data":{}}
 
-hostname = mlol.qt.qq.com
+hostname = mlol.qt.qq.com, sentry.qt.qq.com, *.tjstats.com, *.ad.qq.com
