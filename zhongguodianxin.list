@@ -1,0 +1,7 @@
+# 中国电信 App 去广告分流规则
+
+# 行为数据统计（可选）
+HOST,bigdata-behaviordata.189.cn,REJECT
+
+# 日志上报（可选）
+HOST,mdap.mpaas.cn-hangzhou.aliyuncs.com,REJECT
