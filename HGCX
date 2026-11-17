@@ -1,0 +1,26 @@
+; ===========================================================
+; 红果短剧去广告 — Quantumult X 重写规则(Rewrite / Module)
+; 仓库文件名建议：RedGuoAdBlock-Rewrite.conf
+; 类型：Module → 在 QX「模块/重写」里作为「Rewrite 类型」远程订阅导入
+; 作用：按完整 URL 正则 reject, 补分流规则盲区(走正常域名但路径是广告的请求)
+; 动作 reject = 直接阻断该请求; 与分流规则互补, 建议同时启用
+; ===========================================================
+[URL]
+
+; —— 开屏 / splash 广告接口 ——
+^https?://[^/]*(snssdk|toutiao|bytedance)\.com/(api/ad|api/ads|get_ads|getad|splash|ad_(feedback|info|list|load)) reject
+
+; —— 穿山甲 / Pangle 素材拉取路径 ——
+^https?://[^/]*(pangolin|pangle|pglstatp)[^/]*\.(com|cn)/(getads|get_ads|ad_|bidding|feed|render) reject
+
+; —— GroMore 聚合广告 加载 ——
+^https?://[^/]*(gromore|ad\.volces)[^/]*/(api/)?(get|load|ad) reject
+
+; —— 广告曝光 / 点击 / 竞价 埋点上报 ——
+^https?://[^/]*(snssdk|bytedance)\.com/(service/2/app_log|monitor/monitor|web/report) reject
+^https?://[^/]*(abtest|tobapplog|applog)[^/]*\.(bytedance|snssdk)\.com/ reject
+
+; —— 通用: URL 中出现独立 ad 段(误伤正片时删本行) ——
+^https?://[^/]+/(api/)?(ad|ads)(/|\?|$) reject
+
+[FINAL]
