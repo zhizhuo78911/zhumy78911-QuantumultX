@@ -1,0 +1,26 @@
+; ===========================================================
+; 红果短剧去广告 — Quantumult X 重写规则 (Rewrite)
+; 类型：Module → Rewrite
+; 说明：已将原 [URL] 段转换为 QX 标准 [rewrite_local] 格式
+; ===========================================================
+
+[rewrite_local]
+
+; —— 开屏 / splash 广告接口 ——
+url ^https?://[^/]*(snssdk|toutiao|bytedance)\.com/(api/ad|api/ads|get_ads|getad|splash|ad_(feedback|info|list|load)) reject
+
+; —— 穿山甲 / Pangle 素材拉取路径 ——
+url ^https?://[^/]*(pangolin|pangle|pglstatp)[^/]*\.(com|cn)/(getads|get_ads|ad_|bidding|feed|render) reject
+
+; —— GroMore 聚合广告加载 ——
+url ^https?://[^/]*(gromore|ad\.volces)[^/]*/(api/)?(get|load|ad) reject
+
+; —— 广告曝光 / 点击 / 竞价埋点上报 ——
+url ^https?://[^/]*(snssdk|bytedance)\.com/(service/2/app_log|monitor/monitor|web/report) reject
+url ^https?://[^/]*(abtest|tobapplog|applog)[^/]*\.(bytedance|snssdk)\.com/ reject
+
+; —— 通用: URL 中出现独立 ad 段（误伤正片时请删除本行）——
+url ^https?://[^/]+/(api/)?(ad|ads)(/|\?|$) reject
+
+[mitm]
+hostname = *.snssdk.com, *.toutiao.com, *.bytedance.com, *.pangolin.com, *.pangle.com, *.pglstatp.com, *.gromore.com, *.ad.volces.com, *.abtest.bytedance.com, *.tobapplog.bytedance.com, *.applog.bytedance.com
