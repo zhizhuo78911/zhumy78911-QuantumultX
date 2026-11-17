@@ -1,18 +1,10 @@
-# 红果短剧 去广告 · 分流规则 v2.0（零 direct 版 · Quantumult X）
-# 导入位置：QX → 底部「分流」→「引用」→ 右上角 + → 填本文件的 raw 地址
-#
-# 【本版最重要的一点】不含任何 direct 规则。
-#   之前所有「网络错误，请点击重试」都是 direct 造成的——把红果流量强制直连，
-#   而你的网络到那些域名直连不通，于是只有红果断网、其他走代理的 App 正常。
-#   全部交给默认策略就恢复了。以后也不要给红果加 direct。
-#
-# 【结构】
-#   一、基线：你实测可用的一套，原样保留
-#   二、增强：新增的纯广告域名，出问题先删这一段
-#
-# 【顺序】本文件全是 reject，顺序不影响结果。
 
-# ==================== 一、基线（已验证可用，勿动） ====================
+# 红果短剧 去广告 · 分流规则 v2.0
+# Quantumult X
+# 不含 direct 规则，全部交给默认策略
+
+# ==================== 一、基线规则 ====================
+
 # 红果核心广告拦截
 host-suffix, hongguoapp.com, reject
 host-suffix, hongguosdk.com, reject
@@ -30,7 +22,8 @@ host-keyword, be-pack, reject
 host-suffix, zijieapi.com, reject
 host-keyword, tnc.snssdk, reject
 
-# ==================== 二、增强（新增，出问题先删这段） ====================
+# ==================== 二、增强规则 ====================
+
 # 剧集广告视频位
 host-suffix, v5-reading-ad.qznovelvod.com, reject
 host-suffix, v6-reading-ad.qznovelvod.com, reject
@@ -42,7 +35,7 @@ host-suffix, v96-reading-ad.qznovelvod.com, reject
 host-suffix, v5-bd-daily-reading-ad.qznovelvod.com, reject
 host-suffix, v5-se-sjy-daily-reading-ad.qznovelvod.com, reject
 
-# 广告素材签名 / 广告素材 CDN
+# 广告素材签名 / CDN
 host-suffix, p3-ad-sign.byteimg.com, reject
 host-suffix, p6-ad-sign.byteimg.com, reject
 host-suffix, p9-ad-sign.byteimg.com, reject
