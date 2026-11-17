@@ -1,43 +1,54 @@
-# 红果短剧 去广告 · 分流规则 v1.4（诊断版 · 零拦截）
-# 用途：只保留 7 条 direct，一条 reject 都没有。用来判断问题到底出在哪。
+# 红果短剧 去广告 · 分流规则 v2.0（零 direct 版 · Quantumult X）
+# 导入位置：QX → 底部「分流」→「引用」→ 右上角 + → 填本文件的 raw 地址
 #
-# 结果判定：
-#   能正常进  → 问题在 v1.3 那 10 条 reject 里，按文件末尾的顺序逐条加回
-#   还是无网络 → 和域名规则完全无关，是 QX 隧道本身被红果检测到（VPN 检测）
+# 【本版最重要的一点】不含任何 direct 规则。
+#   之前所有「网络错误，请点击重试」都是 direct 造成的——把红果流量强制直连，
+#   而你的网络到那些域名直连不通，于是只有红果断网、其他走代理的 App 正常。
+#   全部交给默认策略就恢复了。以后也不要给红果加 direct。
 #
-# 安装前必做：
-#   1. QX → 分流 → 引用，把除本文件以外的引用全部关掉或删掉
-#      【旧的那份 v1.2 很可能还开着，hongguoapp.com 还在拦，它就是真凶】
-#   2. QX → 设置 → 重写，确认没有任何引用被打开
-#   3. QX → 设置 → MITM，确认「MITM 解密」总开关是关的
-#   4. 覆盖同名文件 → QX 分流引用下拉刷新 → 彻底杀掉红果重开
+# 【结构】
+#   一、基线：你实测可用的一套，原样保留
+#   二、增强：新增的纯广告域名，出问题先删这一段
+#
+# 【顺序】本文件全是 reject，顺序不影响结果。
 
-# ==================== 只放行，不拦截 ====================
-host-suffix, fqnovel.com, direct
-host-suffix, hongguo.com, direct
-host-suffix, hongguo.douyin.com, direct
-host-suffix, douyincdn.com, direct
-host-suffix, douyinvod.com, direct
-host-suffix, byteimg.com, direct
-host-suffix, pstatp.com, direct
+# ==================== 一、基线（已验证可用，勿动） ====================
+# 红果核心广告拦截
+host-suffix, hongguoapp.com, reject
+host-suffix, hongguosdk.com, reject
+host-keyword, hongguo.ad, reject
 
-# ==================== 如果这一版能进，按这个顺序加回 reject ====================
-# 每加一批就重开红果测一次，哪批崩了就是哪批里有接口域名。
-#
-# 第 1 批（最安全）
-# host-suffix, ad.pangle.cn, reject
-# host-suffix, ad.pangolin.cn, reject
-# host-suffix, pangle.io, reject
-#
-# 第 2 批（穿山甲 SDK 主体）
-# host-suffix, pangolin-sdk-toutiao.com, reject
-# host-suffix, pangolin-sdk-toutiao1.com, reject
-# host-suffix, pglstatp-toutiao.com, reject
-#
-# 第 3 批（广告素材签名）
-# host-suffix, p3-ad-sign.byteimg.com, reject
-# host-suffix, p6-ad-sign.byteimg.com, reject
-# host-suffix, p9-ad-sign.byteimg.com, reject
-#
-# 第 4 批（电商）
-# host-suffix, adim.pinduoduo.com, reject
+# 穿山甲与广告联盟 SDK
+host-suffix, pangolin-sdk-toutiao.com, reject
+host-suffix, pglstatp-toutiao.com, reject
+host-suffix, ad.pangle.cn, reject
+host-suffix, ad.pangolin.cn, reject
+host-keyword, ad-union-sdk, reject
+
+# 字节系广告与配置兜底
+host-keyword, be-pack, reject
+host-suffix, zijieapi.com, reject
+host-keyword, tnc.snssdk, reject
+
+# ==================== 二、增强（新增，出问题先删这段） ====================
+# 剧集广告视频位
+host-suffix, v5-reading-ad.qznovelvod.com, reject
+host-suffix, v6-reading-ad.qznovelvod.com, reject
+host-suffix, v9-reading-ad.qznovelvod.com, reject
+host-suffix, v11-reading-ad.qznovelvod.com, reject
+host-suffix, v13-reading-ad.qznovelvod.com, reject
+host-suffix, v26-reading-ad.qznovelvod.com, reject
+host-suffix, v96-reading-ad.qznovelvod.com, reject
+host-suffix, v5-bd-daily-reading-ad.qznovelvod.com, reject
+host-suffix, v5-se-sjy-daily-reading-ad.qznovelvod.com, reject
+
+# 广告素材签名 / 广告素材 CDN
+host-suffix, p3-ad-sign.byteimg.com, reject
+host-suffix, p6-ad-sign.byteimg.com, reject
+host-suffix, p9-ad-sign.byteimg.com, reject
+host-suffix, sf3-ttcdn-tos.pstatp.com, reject
+host-suffix, activity-ag.awemeughun.com, reject
+host-suffix, ad.toutiao.com, reject
+
+# 电商广告落地页
+host-suffix, adim.pinduoduo.com, reject
