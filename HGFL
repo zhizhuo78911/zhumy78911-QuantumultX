@@ -1,0 +1,47 @@
+; ===========================================================
+; 红果短剧去广告 — Quantumult X 分流规则(Filter / Module)
+; 仓库文件名建议：RedGuoAdBlock-Filter.conf
+; 类型：Module → 在 QX「模块/分流」里作为「Filter 类型」远程订阅导入
+; 作用：按域名 REJECT 字节系广告 SDK 请求(穿山甲/Pangle/GroMore/巨量/埋点上报)
+; 注意：本清单来自字节广告 SDK 的公开特征，非从你抓包提取(抓包只有正片视频流)
+;       若某行导致红果功能异常(登录/播放/提现), 在行首加 ; 注释掉即可
+; ===========================================================
+[RULE]
+
+; —— 穿山甲 Pangolin / Pangle 广告 SDK ——
+HOST-SUFFIX,pangolin.snssdk.com,REJECT
+HOST-SUFFIX,pangolin-sec.snssdk.com,REJECT
+HOST-SUFFIX,pangolin-sdk-toutiao.com,REJECT
+HOST-SUFFIX,api-access.pangolin-sdk-toutiao.com,REJECT
+HOST-SUFFIX,api-access.pangolin-sdk-toutiao1.com,REJECT
+HOST-SUFFIX,pglstatp-toutiao.com,REJECT
+HOST-SUFFIX,pangle.cn,REJECT
+HOST-SUFFIX,pangolin-dp.snssdk.com,REJECT
+
+; —— GroMore 聚合广告(开屏/激励视频常走此) ——
+HOST-SUFFIX,gromore.com,REJECT
+HOST-SUFFIX,api.gromore.com,REJECT
+
+; —— 巨量引擎 / 头条广告接口 ——
+HOST-SUFFIX,ad.toutiao.com,REJECT
+HOST-SUFFIX,ad.snssdk.com,REJECT
+HOST-SUFFIX,ads.toutiaoapi.com,REJECT
+HOST-SUFFIX,api.ads.toutiao.com,REJECT
+HOST-SUFFIX,openads.toutiao.com,REJECT
+HOST-SUFFIX,ssp.toutiao.com,REJECT
+HOST-SUFFIX,admarket.snssdk.com,REJECT
+
+; —— 广告竞价 / 反馈上报(bidding / feedback) ——
+HOST-SUFFIX,pangle-bidding,REJECT
+HOST-SUFFIX,ad-bidding,REJECT
+HOST-SUFFIX,cs.snssdk.com,REJECT
+
+; —— 字节统计/埋点/AB测试(可拦截减少广告回传; 异常时注释) ——
+HOST-SUFFIX,log.snssdk.com,REJECT
+HOST-SUFFIX,abtestvm.bytedance.com,REJECT
+HOST-SUFFIX,tobapplog.bytedance.com,REJECT
+HOST-SUFFIX,applog.snssdk.com,REJECT
+HOST-SUFFIX,logbytedance.com,REJECT
+HOST-SUFFIX,monitor.snssdk.com,REJECT
+
+[FINAL]
