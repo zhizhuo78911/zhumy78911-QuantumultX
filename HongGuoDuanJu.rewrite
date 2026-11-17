@@ -1,34 +1,27 @@
-# 红果短剧 去广告 · 重写规则 v2.0（实验性 · 可选 · Quantumult X）
-# 导入位置：QX → 底部「设置」→「重写」→「引用」→ 右上角 + → 填本文件的 raw 地址
-# 前提：安装并信任 MITM 证书 + 打开「MITM 解密」，否则本文件完全不生效
-#
-# 【先读这段】
-# 分流规则已经拦掉了穿山甲 SDK 的主体域名，所以本文件大部分是兜底。
-# 真正能补漏的是「走接口域名、路径里带 /ad/ 的广告请求」——那需要解密 *.fqnovel.com。
-# 如果红果做了证书固定，一开 MITM 就会 TLS 失败、直接报网络错误。
-# 建议：先用分流跑稳几天，再单独加这份。一加就断网，立刻关掉本引用 + MITM 解密。
-#
-# 【回滚】关掉本引用 → 关闭「MITM 解密」→ 杀掉红果重开。
 
-# ==================== 一、接口域名里带 /ad/ 的广告请求 ====================
-# 只命中路径段为 /ad/ /ads/ /advert/ 的接口，不会碰 /reading/ 这类正文接口
+# 红果短剧 去广告 · 重写规则 v2.0
+# Quantumult X
+# 需要 MITM 证书安装、信任并开启解密
+
+# ==================== 一、广告接口路径 ====================
+
+# 只匹配广告路径，不匹配 reading 正文路径
 ^https?:\/\/[^\/]*\.fqnovel\.com\/.*\/(ad|ads|advert|advertise)\/ url reject-dict
 
-# ==================== 二、穿山甲广告位接口（兜底） ====================
-# 分流已整域 reject 了 pangolin-sdk-toutiao.com，这条仅在分流关闭时才有机会命中
+# ==================== 二、穿山甲广告接口兜底 ====================
+
 ^https?:\/\/api-access\.pangolin-sdk-toutiao\.com\/api\/ad\/union\/sdk\/get_ads url reject-dict
 ^https?:\/\/api-access\.pangolin-sdk-toutiao\.com\/api\/ad\/union\/sdk\/settings url reject-dict
 
 # ==================== 三、红果自有广告路径（默认关闭） ====================
-# 分流已整域拦了 hongguoapp.com，这里不需要再开
+
 # ^https?:\/\/[^\/]*hongguoapp\.com\/.*\/(ad|ads|advert|advertise)\/ url reject-dict
 
 # ==================== 四、MITM 解密主机名 ====================
-# 只解密规则用到的主机。只需要 *.fqnovel.com，别把 byteimg/pstatp 加进来——
-# 图片 CDN 全量解密开销大，且可能触发证书固定。
+
 hostname = *.fqnovel.com
 
-# ==================== 附：可选增强（默认关闭，不下载任何脚本） ====================
-# 需要额外把 hongguo-ad.js 传到仓库根目录，把 <用户名>/<仓库名> 换成你自己的，
-# 再删掉行首的 # 才生效。不删注释就完全不执行，不会有 404。
-# ^https?:\/\/[^\/]+\.fqnovel\.com\/reading\/ url script-response-body https://raw.githubusercontent.com/<用户名>/<仓库名>/main/hongguo-ad.js
+# ==================== 五、可选脚本（默认关闭） ====================
+
+# 需要先上传 hongguo-ad.js 到仓库根目录
+# ^https?:\/\/[^\/]+\.fqnovel\.com\/reading\/ url script-response-body https://raw.githubusercontent.com/zhizhuo78911/zhumy78911-QuantumultX/main/hongguo-ad.js
