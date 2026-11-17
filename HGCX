@@ -1,0 +1,24 @@
+# 红果短剧 去广告 · 重写规则（Quantumult X）
+# 仓库：https://github.com/zhizhuo78911/zhumy78911-QuantumultX
+# 用法：Quantumult X → 重写 → 引用 → 右上角 + → 填本文件的 raw 地址
+# 前提：必须安装并信任 MITM 证书，且打开「MITM 解密」开关，否则本文件不生效
+# 文件末尾的 hostname 行会自动并入 MITM 主机名列表
+
+# ==================== 一、穿山甲广告接口：回空，让 SDK 认为无广告可投 ====================
+# 申请广告位
+^https?:\/\/api-access\.pangolin-sdk-toutiao\.com\/api\/ad\/union\/sdk\/get_ads url reject-dict
+# 竞价预取
+^https?:\/\/api-access\.pangolin-sdk-toutiao\.com\/api\/ad\/union\/server_bidding\/pre_fetch url reject-200
+# 广告位配置
+^https?:\/\/api-access\.pangolin-sdk-toutiao\.com\/api\/ad\/union\/sdk\/settings url reject-dict
+
+# ==================== 二、接口响应清理：删掉下发数据里的广告位 / 广告卡片 ====================
+# 红果接口走 api*.fqnovel.com 的 /reading/ 路径，脚本见同仓库 hongguo-ad.js
+# 不想用脚本就注释掉下面这一行，其余规则照样有效
+^https?:\/\/[^\/]+\.fqnovel\.com\/reading\/ url script-response-body https://raw.githubusercontent.com/zhizhuo78911/zhumy78911-QuantumultX/main/hongguo-ad.js
+
+# 国内访问 raw.githubusercontent.com 失败时，把上面一行的脚本地址换成下面这个 jsDelivr 地址（二选一）：
+# ^https?:\/\/[^\/]+\.fqnovel\.com\/reading\/ url script-response-body https://cdn.jsdelivr.net/gh/zhizhuo78911/zhumy78911-QuantumultX@main/hongguo-ad.js
+
+# ==================== 三、MITM 解密主机名 ====================
+hostname = *.fqnovel.com, api-access.pangolin-sdk-toutiao.com
