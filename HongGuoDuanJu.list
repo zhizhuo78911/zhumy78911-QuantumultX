@@ -1,55 +1,103 @@
-# 红果短剧 去广告 · 分流规则 v1.1（Quantumult X）
-# 仓库：https://github.com/zhizhuo78911/zhumy78911-QuantumultX
-# 用法：Quantumult X → 分流 → 引用 → 右上角 + → 填本文件 raw 地址
-# 纯域名规则，不需要 MITM、不需要证书、不会出现 404
-# 【顺序不能改】广告拦截必须排在 fqnovel.com 直连之前
-
-# ==================== 一、广告域名拦截 ====================
+# 红果短剧 去广告 · 分流规则 v1.2（Quantumult X）
+# 导入位置：Quantumult X → 底部「分流」→「引用」→ 右上角 + → 填本文件的 raw 地址
+# 纯域名规则：不需要 MITM、不需要证书、不会出现 404
+#
+# 【顺序不能改】分流是「第一条命中即生效」，所有 reject 必须排在 direct 之前。
+# 本文件是「分流规则」，不要填到「重写」里，两者格式不同。
+#
+# 数据来源：
+#   - abclq/home-dns-adblock  dist/quantumultx-rules.txt（真实设备 DNS 日志）
+#   - Tartarus2014/Loon-Script  Plugin/Block/hgdj.lpx
+#   - blackmatrix7/ios_rule_script
+# ==================== 一、核心广告拦截 ====================
 # 红果自有广告服务
 host-suffix, hongguoapp.com, reject
 host-suffix, hongguosdk.com, reject
-
-# 穿山甲（Pangle）/ 字节广告联盟：广告接口、素材、渲染器
+# 穿山甲（Pangle）/ 字节广告联盟：接口、素材、渲染器
 host-suffix, pangolin-sdk-toutiao.com, reject
+host-suffix, pangolin-sdk-toutiao1.com, reject
 host-suffix, pglstatp-toutiao.com, reject
+host-suffix, pangle.io, reject
 host-suffix, ad.pangle.cn, reject
 host-suffix, ad.pangolin.cn, reject
 host-suffix, ad.zijieapi.com, reject
-
-# 字节广告位下发（番茄系共用，红果同属番茄系）
+# 字节广告位下发 / 配置下发（番茄系与红果共用）
+host-suffix, ads3-normal-hl.zijieapi.com, reject
+host-suffix, ads3-normal-lf.zijieapi.com, reject
+host-suffix, ads3-normal-lq.zijieapi.com, reject
+host-suffix, ads5-normal-hl.zijieapi.com, reject
 host-suffix, ads5-normal-lf.zijieapi.com, reject
-host-suffix, frontier100-toutiao-lf.fqnovel.com, reject
-
-# 番茄系视频广告域名
-host-suffix, novelapp.ixigua.com, reject
-host-suffix, v6-novelapp.ixigua.com, reject
-host-suffix, default.ixigua.com, reject
-
-# 电商联盟广告 / 广告来源追踪
-host-suffix, adim.pinduoduo.com, reject
+host-suffix, ads5-normal-lq.zijieapi.com, reject
+host-suffix, tnc0-aliec2.zijieapi.com, reject
+host-suffix, tnc0-alisc1.zijieapi.com, reject
+host-suffix, tnc3-aliec2.zijieapi.com, reject
+host-suffix, tnc3-alisc1.zijieapi.com, reject
 host-suffix, tnc3-alisc1.bytedance.com, reject
-
-# ==================== 二、内容 / 播放域名直连 ====================
-# 接口主域：必须排在上面所有广告子域规则之后
-host-suffix, fqnovel.com, direct
-host-suffix, hongguo.com, direct
-host-suffix, hongguo.douyin.com, direct
-
-# 视频流 CDN：红果正片走 douyincdn 的 flv 直播流，必须直连
-host-suffix, douyincdn.com, direct
-host-suffix, douyinvod.com, direct
-
-# 图片 / 封面
-host-suffix, byteimg.com, direct
-host-suffix, pstatp.com, direct
-
-# ==================== 三、可选：激进的拦截（默认关闭） ====================
-# 可能影响登录 / 推荐 / 部分剧播放，需要时去掉行首的 #
+# 广告素材 / 广告签名 / 落地页（必须在下面 byteimg、pstatp 直连之前）
+host-suffix, p3-ad-sign.byteimg.com, reject
+host-suffix, p6-ad-sign.byteimg.com, reject
+host-suffix, p9-ad-sign.byteimg.com, reject
+host-suffix, sf3-ttcdn-tos.pstatp.com, reject
+host-suffix, activity-ag.awemeughun.com, reject
+host-suffix, ad.toutiao.com, reject
+# 番茄 / 红果 剧集广告视频位
+host-suffix, v5-reading-ad.qznovelvod.com, reject
+host-suffix, v6-reading-ad.qznovelvod.com, reject
+host-suffix, v9-reading-ad.qznovelvod.com, reject
+host-suffix, v11-reading-ad.qznovelvod.com, reject
+host-suffix, v13-reading-ad.qznovelvod.com, reject
+host-suffix, v26-reading-ad.qznovelvod.com, reject
+host-suffix, v96-reading-ad.qznovelvod.com, reject
+host-suffix, v5-bd-daily-reading-ad.qznovelvod.com, reject
+host-suffix, v5-se-sjy-daily-reading-ad.qznovelvod.com, reject
+# 电商联盟广告
+host-suffix, adim.pinduoduo.com, reject
+# ==================== 二、可选：激进拦截（默认注释） ====================
+# 取消注释前先想清楚：命中率不确定，可能影响播放 / 登录 / 推荐。
+# 这一段故意排在「三、直连」之前——取消注释后才会真正生效。
+#
+# 番茄 / 西瓜 视频广告域名，拦了可能影响部分剧的播放
+# host-suffix, frontier100-toutiao-lf.fqnovel.com, reject
+# host-suffix, novelapp.ixigua.com, reject
+# host-suffix, v6-novelapp.ixigua.com, reject
+# host-suffix, default.ixigua.com, reject
 # host-suffix, novelapp.fqnovelvod.com, reject
 # host-suffix, v6-novelapp.fqnovelvod.com, reject
+#
+# 应用包下载 / 埋点统计
 # host-suffix, gurd.snssdk.com, reject
 # host-suffix, log-hl.snssdk.com, reject
 # host-suffix, i-lq.snssdk.com, reject
 # host-suffix, mon11-misc-lq.fqnovel.com, reject
+# host-suffix, webcast5-open-hl.douyin.com, reject
 # host-suffix, sf3-fe-tos.pglstatp-toutiao.com, reject
-# host-suffix, p3-ad-sign.byteimg.com, reject
+#
+# 追踪 / 统计（拦了通常不影响看剧，但可能影响登录态与推送）
+# host-suffix, dig.bdurl.net, reject
+# host-suffix, aeventlog.beacon.qq.com, reject
+# host-suffix, api.iegadp.qq.com, reject
+# host-suffix, cnlogs.umeng.com, reject
+# host-suffix, ulogs.umeng.com, reject
+# host-suffix, errnewlog.umeng.com, reject
+# host-suffix, ossnt-errlog.umeng.com, reject
+#
+# 来自设备日志但语义不明的域名（可能是广告，也可能是 CDN，自行判断）
+# host-suffix, comfylink.com, reject
+# host-suffix, jomoxc.com, reject
+# host-suffix, ndcpp.com, reject
+# host-suffix, qrstuvwxyzab.com, reject
+# host-suffix, wmzfylgdsz.com, reject
+# host-suffix, wuchuyun.com, reject
+# host-suffix, xinqiucc.com, reject
+# host-suffix, ydycdn.com, reject
+# ==================== 三、内容 / 播放域名直连 ====================
+# 接口主域：必须排在上面所有广告子域规则之后
+host-suffix, fqnovel.com, direct
+host-suffix, hongguo.com, direct
+host-suffix, hongguo.douyin.com, direct
+# 视频流 CDN：红果正片走 douyincdn 的 flv 直播流，必须直连
+host-suffix, douyincdn.com, direct
+host-suffix, douyinvod.com, direct
+# 图片 / 封面
+host-suffix, byteimg.com, direct
+host-suffix, pstatp.com, direct
