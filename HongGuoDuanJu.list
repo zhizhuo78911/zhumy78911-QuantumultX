@@ -1,92 +1,18 @@
-# 红果短剧 去广告 · 分流规则 v1.3（止血版 · Quantumult X）
-# 导入位置：Quantumult X → 分流 → 引用 → 填本文件的 raw 地址
+# 红果短剧 去广告 · 分流规则 v1.4（诊断版 · 零拦截）
+# 用途：只保留 7 条 direct，一条 reject 都没有。用来判断问题到底出在哪。
 #
-# 【v1.3 为什么改】
-# v1.2 把 hongguoapp.com、hongguosdk.com、tnc*.zijieapi.com、ad.zijieapi.com
-# 这四组域名整段 reject 了。它们是照 Loon 社区插件抄来的，没有在红果上验证过。
-# 从命名看，hongguoapp.com 很可能就是红果自己的接口域名，tnc*.zijieapi.com
-# 是字节的配置下发——拦掉就会直接报「网络错误，请点击重试」。
-# 所以 v1.3 把它们全部移到「二、待验证」并默认关闭。
+# 结果判定：
+#   能正常进  → 问题在 v1.3 那 10 条 reject 里，按文件末尾的顺序逐条加回
+#   还是无网络 → 和域名规则完全无关，是 QX 隧道本身被红果检测到（VPN 检测）
 #
-# 【用法】先用这一版确认 App 正常，再按组逐条放开，每放开一组就重开 App 测一次。
-#
-# 【顺序不能改】分流是「第一条命中即生效」，所有 reject 必须排在 direct 之前。
+# 安装前必做：
+#   1. QX → 分流 → 引用，把除本文件以外的引用全部关掉或删掉
+#      【旧的那份 v1.2 很可能还开着，hongguoapp.com 还在拦，它就是真凶】
+#   2. QX → 设置 → 重写，确认没有任何引用被打开
+#   3. QX → 设置 → MITM，确认「MITM 解密」总开关是关的
+#   4. 覆盖同名文件 → QX 分流引用下拉刷新 → 彻底杀掉红果重开
 
-# ==================== 一、纯广告 SDK（默认启用） ====================
-# 这些域名只服务广告 SDK，拦掉正常表现是「没有广告可投」，不会影响看剧
-host-suffix, pangolin-sdk-toutiao.com, reject
-host-suffix, pangolin-sdk-toutiao1.com, reject
-host-suffix, pglstatp-toutiao.com, reject
-host-suffix, pangle.io, reject
-host-suffix, ad.pangle.cn, reject
-host-suffix, ad.pangolin.cn, reject
-
-# 广告素材签名位（只签广告，不签正片）
-host-suffix, p3-ad-sign.byteimg.com, reject
-host-suffix, p6-ad-sign.byteimg.com, reject
-host-suffix, p9-ad-sign.byteimg.com, reject
-
-# 电商广告落地页
-host-suffix, adim.pinduoduo.com, reject
-
-# ==================== 二、待验证（默认关闭，按组放开） ====================
-# 【A 组】红果自有域名：最可疑。hongguoapp.com 可能就是接口主域，
-#         放开后若 App 立刻报网络错误，说明它就是接口域名，永远不要拦。
-# host-suffix, hongguoapp.com, reject
-# host-suffix, hongguosdk.com, reject
-#
-# 【B 组】字节配置下发：TNC 负责 AB 实验与启动配置，拦了可能卡启动
-# host-suffix, ad.zijieapi.com, reject
-# host-suffix, tnc0-aliec2.zijieapi.com, reject
-# host-suffix, tnc0-alisc1.zijieapi.com, reject
-# host-suffix, tnc3-aliec2.zijieapi.com, reject
-# host-suffix, tnc3-alisc1.zijieapi.com, reject
-# host-suffix, tnc3-alisc1.bytedance.com, reject
-#
-# 【C 组】字节广告位下发：拦了广告位拿不到配置
-# host-suffix, ads3-normal-hl.zijieapi.com, reject
-# host-suffix, ads3-normal-lf.zijieapi.com, reject
-# host-suffix, ads3-normal-lq.zijieapi.com, reject
-# host-suffix, ads5-normal-hl.zijieapi.com, reject
-# host-suffix, ads5-normal-lf.zijieapi.com, reject
-# host-suffix, ads5-normal-lq.zijieapi.com, reject
-#
-# 【D 组】剧集广告视频与素材：拦了可能连播放器一起报错，最后再开
-# host-suffix, v5-reading-ad.qznovelvod.com, reject
-# host-suffix, v6-reading-ad.qznovelvod.com, reject
-# host-suffix, v9-reading-ad.qznovelvod.com, reject
-# host-suffix, v11-reading-ad.qznovelvod.com, reject
-# host-suffix, v13-reading-ad.qznovelvod.com, reject
-# host-suffix, v26-reading-ad.qznovelvod.com, reject
-# host-suffix, v96-reading-ad.qznovelvod.com, reject
-# host-suffix, v5-bd-daily-reading-ad.qznovelvod.com, reject
-# host-suffix, v5-se-sjy-daily-reading-ad.qznovelvod.com, reject
-# host-suffix, sf3-ttcdn-tos.pstatp.com, reject
-# host-suffix, activity-ag.awemeughun.com, reject
-# host-suffix, ad.toutiao.com, reject
-#
-# 【E 组】激进项：语义不明或可能误伤，不确认别开
-# host-suffix, frontier100-toutiao-lf.fqnovel.com, reject
-# host-suffix, novelapp.ixigua.com, reject
-# host-suffix, v6-novelapp.ixigua.com, reject
-# host-suffix, default.ixigua.com, reject
-# host-suffix, novelapp.fqnovelvod.com, reject
-# host-suffix, v6-novelapp.fqnovelvod.com, reject
-# host-suffix, gurd.snssdk.com, reject
-# host-suffix, log-hl.snssdk.com, reject
-# host-suffix, i-lq.snssdk.com, reject
-# host-suffix, mon11-misc-lq.fqnovel.com, reject
-# host-suffix, webcast5-open-hl.douyin.com, reject
-# host-suffix, sf3-fe-tos.pglstatp-toutiao.com, reject
-# host-suffix, dig.bdurl.net, reject
-# host-suffix, aeventlog.beacon.qq.com, reject
-# host-suffix, api.iegadp.qq.com, reject
-# host-suffix, cnlogs.umeng.com, reject
-# host-suffix, ulogs.umeng.com, reject
-# host-suffix, errnewlog.umeng.com, reject
-# host-suffix, ossnt-errlog.umeng.com, reject
-
-# ==================== 三、内容 / 播放域名直连 ====================
+# ==================== 只放行，不拦截 ====================
 host-suffix, fqnovel.com, direct
 host-suffix, hongguo.com, direct
 host-suffix, hongguo.douyin.com, direct
@@ -94,3 +20,24 @@ host-suffix, douyincdn.com, direct
 host-suffix, douyinvod.com, direct
 host-suffix, byteimg.com, direct
 host-suffix, pstatp.com, direct
+
+# ==================== 如果这一版能进，按这个顺序加回 reject ====================
+# 每加一批就重开红果测一次，哪批崩了就是哪批里有接口域名。
+#
+# 第 1 批（最安全）
+# host-suffix, ad.pangle.cn, reject
+# host-suffix, ad.pangolin.cn, reject
+# host-suffix, pangle.io, reject
+#
+# 第 2 批（穿山甲 SDK 主体）
+# host-suffix, pangolin-sdk-toutiao.com, reject
+# host-suffix, pangolin-sdk-toutiao1.com, reject
+# host-suffix, pglstatp-toutiao.com, reject
+#
+# 第 3 批（广告素材签名）
+# host-suffix, p3-ad-sign.byteimg.com, reject
+# host-suffix, p6-ad-sign.byteimg.com, reject
+# host-suffix, p9-ad-sign.byteimg.com, reject
+#
+# 第 4 批（电商）
+# host-suffix, adim.pinduoduo.com, reject
