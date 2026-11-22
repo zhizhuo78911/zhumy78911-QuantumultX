@@ -1,0 +1,54 @@
+; ============================================================
+; 易视云 EseeCloud 去广告 — Quantumult X 分流规则 (Filter)
+; 依据 2026-11-22 QX 1.9.0 实际抓包(log.txt / 369 条请求)逐条核对生成
+; 资源类型：Filter（分流）   是否需要 MITM：不需要
+; 安全说明：本文件不含 snssdk.com / toutiao.com / bytedance.com /
+;           douyin 相关域名，不会误伤抖音评论区头像与视频区
+; ============================================================
+
+[filter_local]
+
+; —— 广告 SDK 主域（抓包实测，这些域只服务广告，整域拦截安全）——
+; 覆盖 logrcv.yunxish.com / api.yunxish.com / cdn.yunxish.com /
+;      service.yunxish.com / usr-api.yunxish.com /
+;      cpc-service-square.yunxish.com / tracelog-debug.yunxish.com
+host-suffix, yunxish.com, reject
+; 覆盖 api.mobrtb.com(/ad/sdk /sdk/event /tracker) / cdn.mobrtb.com(广告素材库)
+host-suffix, mobrtb.com, reject
+; 覆盖 bid.hs.lingjuad.com(/bid 竞价) / sl.hs.lingjuad.com(/tracking 曝光追踪) /
+;      sdkconf.hs.lingjuad.com(/sdk_config)
+host-suffix, lingjuad.com, reject
+; 覆盖 ads-sdk-api.yourongsj.com(/ad/v2 /config/init/v2 /monitor/au)
+host-suffix, yourongsj.com, reject
+; 覆盖 sdk.adhuanxiao.com(/sdk/v1/getAd) / sdk-callback.adhuanxiao.com(/api/bidResult)
+host-suffix, adhuanxiao.com, reject
+; 覆盖 ad-api.adn-plus.com.cn(/mb/sdk1/json)
+host-suffix, adn-plus.com.cn, reject
+; 覆盖 sdk.1rtb.net(/sdk/req_ad)
+host-suffix, 1rtb.net, reject
+; 覆盖 mpcfg.fancydsp.com(/inAppBidding/v5/cdn)
+host-suffix, fancydsp.com, reject
+; 覆盖 c.etoolads.cn(/s/config)
+host-suffix, etoolads.cn, reject
+; 覆盖 cpc-service-square.58iclick.com(/v1/getConfig)
+host-suffix, 58iclick.com, reject
+; 覆盖 cpc-service-square.iggrowth.cn(/v1/getConfig)
+host-suffix, iggrowth.cn, reject
+
+; —— 单个广告 / 埋点主机（只拦主机，不拦整域，避免波及同域正常业务）——
+; sdk-log.partner.sm.cn(/sdk_log 神马搜索联盟 SDK 日志)
+host, sdk-log.partner.sm.cn, reject
+; 103.37.152.97(/fetch 裸 IP 广告节点)
+host, 103.37.152.97, reject
+
+; —— 以下默认关闭，按需自行去掉行首的 ; ——
+; 广告 SDK 的 IP 归属地查询（拦掉不影响 App 功能，仅影响“异地登录/属地”提示）
+;host, pro.ip-api.com, reject
+; 巨量引擎可玩广告组件配置（该域同时被抖音电商静态资源使用，故默认不整域拦，
+; 只建议在 Rewrite 文件里按 /obj/static/ad/ 路径拦）
+;host, lf-cdn-tos.bytescm.com, reject
+
+; —— 明确不放行的核心业务域（易视云监控必须，切勿加入任何拦截规则）——
+; dvr163.com          监控主站/设备/云录像/消息（openapi / tokens / pm-dualstack / ngw-cli / nvrfix / kp2p）
+; eseecloud.com       账号与业务
+; aliyuncs.com        阿里云 OSS，教学视频与素材存放地，禁止整域拦截
