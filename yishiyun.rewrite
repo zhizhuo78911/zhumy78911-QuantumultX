@@ -1,33 +1,69 @@
 # 易视云 去广告 · 重写规则（Quantumult X）
+# 数据来源：quan1.har + quan2.har（2026-11-23 两次抓包，共 781 条请求 / 78 个域名）
 #
-# 【定位】补充规则：只处理「和正文共用一个域名、必须按路径区分」的广告请求。
-#        广告 SDK 的独立域名已经由 YiShiYun.list 处理，本文件不重复拦。
-# 【前提】安装并信任 MITM 证书 + 打开「MITM 解密」，否则完全不生效。
-# 【收益有限】易视云的广告九成走独立 SDK 域名，分流层就能拦干净。
-#            本文件默认只开一条，其余都是注释，按需再开。
+# 【为什么不会再把抖音刷成空白】
+# 本文件只拦「易视云用到的广告 SDK」域名，一个都没碰下面这些：
+#   *.douyinpic.com（抖音头像、封面）   *.douyinvod.com（抖音视频）
+#   *.byteimg.com / *.pstatp.com / *.douyinstatic.com
+# 也不整域拦 bytescm.com —— 那是字节公共 CDN，只按 /obj/static/ad/ 路径匹配，且默认关闭。
+# 旧规则的问题基本就是整域拦了上面这些公共 CDN，才会连抖音一起白。
+#
+# 【前提】安装并信任 MITM 证书 + 打开「MITM 解密」，否则完全不生效
+# 【用法】QX → 设置 → 重写 → 引用 → 右上角 + → 填本文件 raw 地址
+# 只装这一个文件就够，不要再叠加旧的易视云分流规则。
 
-# ==================== 一、UC 广告聚合配置 ====================
-# partner.uc.cn 还承载其它 UC 能力，所以只按路径拦 /mediations
+# ==================== 一、广告 SDK 域名（易视云广告的实际来源） ====================
+# mobrtb 聚合
+^https?:\/\/api\.mobrtb\.com\/ url reject
+^https?:\/\/cdn\.mobrtb\.com\/ url reject
+
+# 广告汇销
+^https?:\/\/sdk\.adhuanxiao\.com\/ url reject
+^https?:\/\/sdk-callback\.adhuanxiao\.com\/ url reject
+
+# 雍荣数据
+^https?:\/\/ads-sdk-api\.yourongsj\.com\/ url reject
+
+# 领聚广告（sl 曝光 / bid 竞价 / sdkconf 配置 / t 追踪 全覆盖）
+^https?:\/\/[^\/]*\.hs\.lingjuad\.com\/ url reject
+
+# ADN+
+^https?:\/\/ad-api\.adn-plus\.com\.cn\/ url reject
+
+# 1rtb
+^https?:\/\/sdk\.1rtb\.net\/ url reject
+
+# FancyDSP
+^https?:\/\/mpcfg\.fancydsp\.com\/ url reject
+
+# etoolads
+^https?:\/\/c\.etoolads\.cn\/ url reject
+
+# 广告位配置下发
+^https?:\/\/cpc-service-square\.58iclick\.com\/ url reject
+^https?:\/\/cpc-service-square\.iggrowth\.cn\/ url reject
+^https?:\/\/cpc-service-square\.yunxish\.com\/ url reject
+
+# UC 广告聚合（partner.uc.cn 还承载其它 UC 能力，只按路径拦）
 ^https?:\/\/partner\.uc\.cn\/mediations url reject-200
 
-# ==================== 二、字节广告素材 CDN（默认关闭） ====================
-# 只拦 /obj/static/ad/ 这一段，绝不整域拦。
-# 但 bytescm.com 同时是抖音的静态资源 CDN，解密它理论上有概率影响抖音，
-# 所以默认注释。确认抖音一切正常后再开，开了要把 *.bytescm.com 加进下面的 hostname。
+# ==================== 二、可选规则（默认关闭，按需开启） ====================
+# 字节 playable 广告组件：bytescm.com 同时是抖音的静态资源 CDN，
+# 解密它有概率影响抖音，所以默认关闭。开了要把 *.bytescm.com 加进 hostname。
 # ^https?:\/\/[^\/]*\.bytescm\.com\/obj\/static\/ad\/ url reject
 
-# ==================== 三、易视云自有广告位（默认关闭，风险最高） ====================
-# 需要解密主接口 openapi.dvr163.com。抓包里 /app_adv/adv 返回的是空列表，
-# 收益不大；开启后若 App 白屏 / 加载不出设备，立刻注释回去。
+# 美团外卖广告图：会连带影响美团 App 的图片，谨慎开启
+# ^https?:\/\/[^\/]*\.meituan\.net\/(wmproduct|linglong|aigchub|bizhorus|evapicture|growthyxdx)\/ url reject
+
+# 爱奇艺广告图：会影响爱奇艺 App
+# ^https?:\/\/pic5\.iqiyipic\.com\/image\/ url reject
+
+# 易视云自有广告位接口：要解密主接口 openapi.dvr163.com，风险最高。
+# 抓包里这些接口返回的都是空列表，收益不大，默认关闭。
+# 开启后若 App 白屏/加载不出设备，立刻注释回去。
 # ^https?:\/\/openapi\.dvr163\.com\/app_adv\/adv url reject-dict
 # ^https?:\/\/openapi\.dvr163\.com\/NewAppApi\/ThirdAdAppApi\/ url reject-dict
 
-# ==================== 四、美团外卖广告图（默认关闭） ====================
-# 按路径拦，不会影响美团 App 其它图片；但和美团共用 CDN，谨慎开启
-# ^https?:\/\/[^\/]*\.meituan\.net\/(wmproduct|linglong|aigchub|bizhorus|evapicture)\/ url reject
-
 # ==================== MITM 解密主机名 ====================
-# 只写当前真正启用的规则用到的主机。
-# 若开启二/三/四，记得把对应主机追加进来：
-#   *.bytescm.com   openapi.dvr163.com   *.meituan.net
-hostname = partner.uc.cn
+# 只写当前启用的规则用到的广告主机，绝不包含抖音、字节图片 CDN。
+hostname = api.mobrtb.com, cdn.mobrtb.com, sdk.adhuanxiao.com, sdk-callback.adhuanxiao.com, ads-sdk-api.yourongsj.com, *.hs.lingjuad.com, ad-api.adn-plus.com.cn, sdk.1rtb.net, mpcfg.fancydsp.com, c.etoolads.cn, cpc-service-square.58iclick.com, cpc-service-square.iggrowth.cn, cpc-service-square.yunxish.com, partner.uc.cn
