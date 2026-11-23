@@ -1,4 +1,0 @@
-# 掌上英雄联盟分流去广告
-HOST, sentry.qt.qq.com, reject
-HOST-SUFFIX, tjstats.com, reject
-HOST-SUFFIX, ad.qq.com, reject
