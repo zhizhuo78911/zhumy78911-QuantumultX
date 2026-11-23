@@ -1,0 +1,41 @@
+# 掌上英雄联盟 去广告 · 分流规则（Quantumult X）
+# 数据来源：qu1.har（2026-11-24 手机抓包，116 条请求 / 13 个域名）
+#
+# 【先说清楚这份抓包的结论】
+# 116 条请求里没有一条广告请求，13 个域名全是游戏内容：
+#   mlol.qt.qq.com（接口）、*.qpic.cn + *.myqcloud.com（图片）、
+#   *.video.qq.com（视频）、*.tdm.qq.com + szmg.qq.com（埋点）、
+#   cloud.tgpa.qq.com（腾讯游戏安全）、k6.tgl.qq.com（封面）
+# 唯一沾广告的是 ads.privacy.qq.com/optout/get_status ——
+# 它是「个性化广告开关状态」查询，说明 App 里接了腾讯优量汇(GDT) SDK。
+#
+# 所以下面的规则是「按优量汇的域名」写的，不是从这份抓包里逐条扒出来的。
+# 装完如果广告还在，说明它走的是腾讯自有广告系统（AMS，接口在 mlol.qt.qq.com 里），
+# 那种只能靠响应改写，需要重新抓一次开屏广告才能定位。
+#
+# 【用法】QX → 分流 → 引用 → + → 填 raw 地址
+# 纯域名规则，不需要证书，不会影响图片和接口
+
+# ==================== 腾讯优量汇 / 广点通 ====================
+# 广告请求、竞价、素材 CDN
+host-suffix, gdt.qq.com, reject
+host-suffix, pgdt.gtimg.cn, reject
+host-suffix, adx.qq.com, reject
+host-suffix, e.qq.com, reject
+
+# ==================== 可选（默认关闭） ====================
+# 关闭个性化广告：只影响「广告是否精准」，不减少广告数量，一般不用开
+# host-suffix, ads.privacy.qq.com, reject
+
+# 穿山甲：腾讯系 App 一般不用，但混合聚合里可能接，需要时再开
+# host-suffix, pangolin-sdk-toutiao.com, reject
+# host-suffix, pglstatp-toutiao.com, reject
+# host-suffix, pangle.io, reject
+# host-suffix, ad.pangle.cn, reject
+
+# ==================== 切勿拦截（否则 App 直接不能用） ====================
+# mlol.qt.qq.com      主接口
+# *.qpic.cn           头像、封面、图片 CDN
+# game.gtimg.cn       游戏素材
+# down.qq.com         更新包、游戏图标
+# *.video.qq.com      视频播放
