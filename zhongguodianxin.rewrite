@@ -1,0 +1,25 @@
+# 中国电信 去广告 · 重写规则（Quantumult X）
+# 数据来源：quantumult-x-2026-11-24-171145.har
+# 目标：打掉 App 自有运营开屏（如「AI家幸福年 · 幸运大转盘」）
+#
+# 依据：开屏前后 App 会拉取 appupdates.189.cn/actives/multiactiveiosclient.json
+#       （「多活动 · iOS 客户端」配置，返回加密串），把它打成空 JSON，
+#       App 就没有活动可弹。
+#
+# 【前提】安装并信任 MITM 证书 + 打开「MITM 解密」，否则不生效
+# 【用法】QX → 设置 → 重写 → 引用 → 右上角 + → 填本文件的 raw 地址
+# 【实验性】接口内容是加密的，无法确认它是否只服务于开屏活动。
+
+# ==================== 运营活动配置 ====================
+# reject-dict 返回 {}，保证仍是合法 JSON，比返回空 body 安全
+^https?:\/\/appupdates\.189\.cn\/actives\/multiactiveiosclient\.json url reject-dict
+
+# ==================== 备选（默认关闭） ====================
+# 如果上面那条让 App 启动异常，换成这条（返回空 200）再试
+# ^https?:\/\/appupdates\.189\.cn\/actives\/multiactiveiosclient\.json url reject-200
+
+# 如果确认是活动页配置，但还想保留活动入口，只去开屏，可以尝试注释掉上面的规则，
+# 改拦「活动页 HTML」而不是配置（需要抓到具体落地页地址后再加）。
+
+# ==================== MITM 解密主机名 ====================
+hostname = appupdates.189.cn
