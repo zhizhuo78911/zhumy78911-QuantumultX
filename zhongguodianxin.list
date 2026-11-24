@@ -1,8 +1,10 @@
-# 中国电信 去广告 · 通用兜底（Quantumult X）
-# 抓包（46 条 / 11 个域名）里没有广告请求，以下规则不是从抓包得出的，
-# 而是主流广告 SDK 的通用域名兜底，能覆盖大部分插屏和开屏广告。
+# 中国电信 去广告 · 分流规则（Quantumult X）
+# 数据来源：quantumult-x-2026-11-24-171145.har（53 条请求 / 15 个域名）
 #
-# 用法：QX → 分流 → 引用 → 右上角 + → 填本文件的 raw 地址
+# 【说明】抓包里没有第三方广告 SDK 的请求，下面是主流广告 SDK 的通用域名兜底。
+# 电信自家的运营开屏（如「幸运大转盘」）不走这些域名，需要配合重写规则。
+#
+# 【用法】QX → 分流 → 引用 → 右上角 + → 填本文件的 raw 地址
 # 纯域名规则，不需要 MITM、不需要证书
 
 # ==================== 穿山甲（Pangle） ====================
@@ -14,9 +16,11 @@ host-suffix, ad.pangolin.cn, reject
 
 # ==================== 腾讯优量汇 / 广点通 ====================
 host-suffix, gdt.qq.com, reject
-host-suffix, pgdt.gtimg.com, reject
 host-suffix, adx.qq.com, reject
 host-suffix, e.qq.com, reject
+# 优量汇素材 CDN，.cn 和 .com 两个都写上，避免漏
+host-suffix, pgdt.gtimg.cn, reject
+host-suffix, pgdt.gtimg.com, reject
 
 # ==================== 可选（默认关闭，需要时去掉行首 #） ====================
 # 快手联盟
@@ -28,5 +32,5 @@ host-suffix, e.qq.com, reject
 # host-suffix, cbjs.baidu.com, reject
 
 # ==================== 切勿拦截 ====================
-# w.189.cn / appupdates.189.cn / capp.189.cn  电信主站与图片，整域拦会导致 App 白屏
+# w.189.cn / appupdates.189.cn / capp.189.cn  电信主站与图片，整域拦会白屏
 # 只拦上面这些独立的广告 SDK 域名
